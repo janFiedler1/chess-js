@@ -1,16 +1,12 @@
 let legalSquares = []
 let isWhiteTurn = true;
-$(document).ready(function () {
-    const boardSquares = document.getElementsByClassName("square");
-    const pieces = document.getElementsByClassName("piece");
-    const piecesImages = document.getElementsByTagName("img");
-});
+const boardSquares = document.getElementsByClassName("square");
+const pieces = document.getElementsByClassName("piece");
+const piecesImages = document.getElementsByTagName("img");
+const rand = ['shoes', 'shirt'];
 
-    setupBoardSquares();
-    setUpPieces();
-    console.log(boardSquares);
-
-
+setupBoardSquares();
+setUpPieces();
 
 function setupBoardSquares() {
     for(let i=0; i<boardSquares.length; i++) {  //add an event listener for dragging pieces over squares and dropping them
@@ -21,11 +17,11 @@ function setupBoardSquares() {
         let square = boardSquares[i];
         square.id = column+row;
     }
-    console.log(boardSquares);
 }
 
 function setUpPieces() {
-    for (let i=0; i<boardSquares.length; i++){
+    console.log(pieces);
+    for (let i=0; i<pieces.length; i++){
         pieces[i].addEventListener("dragstart", drag);
         pieces[i].setAttribute("draggable", true);
         pieces[i].id = pieces[i].className.split(" ")[1]+pieces[i].parentElement.id;
