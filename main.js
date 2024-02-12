@@ -8,6 +8,10 @@ const rand = ['shoes', 'shirt'];
 setupBoardSquares();
 setUpPieces();
 
+/**
+ * Add dragover and drop eventlisteneners to all 64 squares.
+ * Set id to board coordinates (eg. b5)
+ */
 function setupBoardSquares() {
     for(let i=0; i<boardSquares.length; i++) {  //add an event listener for dragging pieces over squares and dropping them
         boardSquares[i].addEventListener("dragover", allowDrop);
@@ -19,8 +23,12 @@ function setupBoardSquares() {
     }
 }
 
+/**
+ * Add dragstart event listener to all 32 pieces and set draggable attribute to true.
+ * Set id to piecename + id of square they are on ()
+ */
+
 function setUpPieces() {
-    console.log(pieces);
     for (let i=0; i<pieces.length; i++){
         pieces[i].addEventListener("dragstart", drag);
         pieces[i].setAttribute("draggable", true);
@@ -36,8 +44,11 @@ function allowDrop(ev) {
 }
 
 
-/* 
- * fgkdfgdfgdf
+/**
+ * Get color by attribute from piece div
+ * If it's the current color's turn, get the piece ID and set the datatransfer object to the id
+ * to be retrieved by the drop event function
+ * and Get possible moves from the piece and starting position
  */
 
 function drag(ev) {
@@ -45,6 +56,8 @@ function drag(ev) {
     const pieceColor = piece.getAttribute("color");
     if((isWhiteTurn && pieceColor=="white" )|| (!isWhiteTurn && pieceColor=="black")) {
         ev.dataTransfer.setData("text", piece.id);  //get the piece id that is getting dragged
+        const startingSquareId = piece.parentNode.id;
+        getPossibleMoves(startingSquareId, piece);
     }
 }
 
@@ -60,17 +73,27 @@ function drop(ev){
     const piece = document.getElementById(data);
     const destinationSquare = ev.currentTarget;
     let destinationSquareId = destinationSquare.id;
-    if(isSquareOccupied(destinationSquare)=="blank"){
+    if(isSquareOccupied(destinationSquare)=="blank"  && legalSquares.includes(destinationSquareId)){
         destinationSquare.appendChild(piece);
         isWhiteTurn = !isWhiteTurn;
+        legalSquares.length = 0;
         return;
     }
-    if(isSquareOccupied(destinationSquare)!="blank"){
-        while(destinationSquare.firstChild()) {
-            destinationSquare.remove(destinationSquare.firstChild);
-            isWhiteTurn = !isWhiteTurn;
-            return;
+    if(isSquareOccupied(destinationSquare)!="blank" && (legalSquares.includes(destinationSquareId))){
+        while(destinationSquare.firstChild) {
+            destinationSquare.removeChild(destinationSquare.firstChild);
         }
+        destinationSquare.appendChild(piece);
+        isWhiteTurn = !isWhiteTurn;
+        legalSquares.length = 0;
+        return;
+    }
+}
+
+function getPossibleMoves(startingSquareId, piece) {
+    const pieceColor = piece.getAttribute("color");
+    if(piece.classList.contains("pawn")){
+        getPawnMoves(startingSquareId, pieceColor);
     }
 }
 
@@ -81,4 +104,62 @@ function isSquareOccupied(square) {
     } else {
         return "blank";
     }
+}
+
+function getPawnMoves(startingSquareId, pieceColor){
+    checkPawnDiagonalCaptures(startingSquareId, pieceColor);
+    checkPawnForwardMoves(startingSquareId, pieceColor);
+
+}
+
+function checkPawnDiagonalCaptures(startingSquareId, pieceColor){
+    const file = startingSquareId.charAt(0);
+    const rank = startingSquareId.charAt(1);
+    const rankNumber = parseInt(rank);
+    let currentFile = file;
+    let currentRank = rankNumber;
+    let currentSquareId = currentFile + currentRank;
+    let currentSquare = document.getElementById(currentSquareId);
+    let squareContent = isSquareOccupied(currentSquare);
+    const direction = pieceColor=="white" ? 1:-1;
+
+    currentRank += direction;
+    for(let i=-1;i<=1;i+=2){
+        currentFile=String.fromCharCode(file.charCodeAt(0)+i);
+        if(currentFile>="a" && currentFile <= "h"){
+            currentSquareId = currentFile+currentRank;
+            currentSquare = document.getElementById(currentSquareId);
+            squareContent=isSquareOccupied(currentSquare);
+            if(squareContent != "blank" && squareContent != pieceColor){
+                legalSquares.push(currentSquareId);
+            }
+        }
+    }
+}
+
+function checkPawnForwardMoves(startingSquareId, pieceColor){
+    const file = startingSquareId.charAt(0);
+    const rank = startingSquareId.charAt(1);
+    const rankNumber = parseInt(rank);
+    let currentFile = file;
+    let currentRank = rankNumber;
+    let currentSquareId = currentFile + currentRank;
+    let currentSquare = document.getElementById(currentSquareId);
+    let squareContent = isSquareOccupied(currentSquare);
+    const direction = pieceColor=="white" ? 1:-1;
+    currentRank += direction;
+    currentSquareId = currentFile+currentRank;
+    currentSquare = document.getElementById(currentSquareId);
+    squareContent=isSquareOccupied(currentSquare);
+    if(squareContent != "blank")
+        return;
+        legalSquares.push(currentSquareId);
+        if(rankNumber != 2 && rankNumber != 7)
+            return;
+            currentRank += direction;
+            currentSquareId = currentFile+currentRank;
+            currentSquare = document.getElementById(currentSquareId);
+            squareContent=isSquareOccupied(currentSquare);
+            if(squareContent != "blank") return;
+            legalSquares.push(currentSquareId);   
 }
