@@ -100,6 +100,9 @@ function getPossibleMoves(startingSquareId, piece) {
     if(piece.classList.contains("knight")){
         getKnightMoves(startingSquareId, pieceColor);
     }
+    if(piece.classList.contains("bishop")){
+        getBishopMoves(startingSquareId, pieceColor);
+    }
 }
 
 function isSquareOccupied(square) {
@@ -188,8 +191,39 @@ function getKnightMoves(startingSquareId, pieceColor){
             let squareContent = isSquareOccupied(currentSquare);
             if(squareContent != "blank" && squareContent == pieceColor)
                 return;
-                legalSquares.push(String.fromCharCode(currentFile+97)+currentRank);
+            legalSquares.push(String.fromCharCode(currentFile+97)+currentRank);
         }
+
+    })
+}
+
+function getBishopMoves(startingSquareId, pieceColor){
+    const file = startingSquareId.charCodeAt(0)-97;
+    const rank = startingSquareId.charAt(1);
+    const rankNumber = parseInt(rank);
+    let currentFile = file;
+    let currentRank = rankNumber;
+
+    const moveVectors = [
+        [1,1], [-1,1], [1,-1], [-1,-1]
+    ];
+    moveVectors.forEach((move)=>{
+        console.log("here");
+        for (let i=1; i<8; i++){
+            console.log(i);
+            currentFile = file+move[0]*i;
+            currentRank = rankNumber+move[1]*i;
+            if(currentFile >= 0 && currentFile <= 7 && currentRank > 0 && currentRank<=8){
+                console.log("possible move: "+String.fromCharCode(currentFile+97)+currentRank);
+                let currentSquareId = String.fromCharCode(currentFile+97)+currentRank;
+                let currentSquare = document.getElementById(currentSquareId);
+                let squareContent = isSquareOccupied(currentSquare);
+                if(squareContent != "blank" && squareContent == pieceColor)
+                    return;
+                legalSquares.push(String.fromCharCode(currentFile+97)+currentRank);
+            }
+        }
+        
 
     })
 }
