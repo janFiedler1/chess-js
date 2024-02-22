@@ -53,6 +53,7 @@ function allowDrop(ev) {
 
 function drag(ev) {
     const piece = ev.target;
+    console.log(piece.parentNode.id);
     const pieceColor = piece.getAttribute("color");
     if((isWhiteTurn && pieceColor=="white" )|| (!isWhiteTurn && pieceColor=="black")) {
         ev.dataTransfer.setData("text", piece.id);  //get the piece id that is getting dragged
@@ -72,6 +73,7 @@ function drop(ev){
     let data = ev.dataTransfer.getData("text");
     const piece = document.getElementById(data);
     const destinationSquare = ev.currentTarget;
+    console.log(destinationSquare.id);
     let destinationSquareId = destinationSquare.id;
     if(isSquareOccupied(destinationSquare)=="blank"  && legalSquares.includes(destinationSquareId)){
         destinationSquare.appendChild(piece);
@@ -79,7 +81,7 @@ function drop(ev){
         legalSquares.length = 0;
         return;
     }
-    if(isSquareOccupied(destinationSquare)!="blank" && (legalSquares.includes(destinationSquareId))){
+    if(isSquareOccupied(destinationSquare)!="blank" && legalSquares.includes(destinationSquareId)){
         while(destinationSquare.firstChild) {
             destinationSquare.removeChild(destinationSquare.firstChild);
         }
@@ -94,6 +96,9 @@ function getPossibleMoves(startingSquareId, piece) {
     const pieceColor = piece.getAttribute("color");
     if(piece.classList.contains("pawn")){
         getPawnMoves(startingSquareId, pieceColor);
+    }
+    if(piece.classList.contains("knight")){
+        getKnightMoves(startingSquareId, pieceColor);
     }
 }
 
@@ -162,4 +167,29 @@ function checkPawnForwardMoves(startingSquareId, pieceColor){
             squareContent=isSquareOccupied(currentSquare);
             if(squareContent != "blank") return;
             legalSquares.push(currentSquareId);   
+}
+
+function getKnightMoves(startingSquareId, pieceColor){
+    const file = startingSquareId.charCodeAt(0)-97;
+    const rank = startingSquareId.charAt(1);
+    const rankNumber = parseInt(rank);
+    let currentFile = file;
+    let currentRank = rankNumber;
+
+    const moves = [
+        [-2,1], [-1,2], [1,2], [2,1], [2,-1], [1,-2], [-1,-2], [-2,-1]
+    ];
+    moves.forEach((move)=>{
+        currentFile = file+move[0];
+        currentRank = rankNumber+move[1];
+        if(currentFile >= 0 && currentFile <= 7 && currentRank > 0 && currentRank<=8){
+            let currentSquareId = String.fromCharCode(currentFile+97)+currentRank;
+            let currentSquare = document.getElementById(currentSquareId);
+            let squareContent = isSquareOccupied(currentSquare);
+            if(squareContent != "blank" && squareContent == pieceColor)
+                return;
+                legalSquares.push(String.fromCharCode(currentFile+97)+currentRank);
+        }
+
+    })
 }
