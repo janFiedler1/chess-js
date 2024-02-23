@@ -53,7 +53,6 @@ function allowDrop(ev) {
 
 function drag(ev) {
     const piece = ev.target;
-    console.log(piece.parentNode.id);
     const pieceColor = piece.getAttribute("color");
     if((isWhiteTurn && pieceColor=="white" )|| (!isWhiteTurn && pieceColor=="black")) {
         ev.dataTransfer.setData("text", piece.id);  //get the piece id that is getting dragged
@@ -73,7 +72,6 @@ function drop(ev){
     let data = ev.dataTransfer.getData("text");
     const piece = document.getElementById(data);
     const destinationSquare = ev.currentTarget;
-    console.log(destinationSquare.id);
     let destinationSquareId = destinationSquare.id;
     if(isSquareOccupied(destinationSquare)=="blank"  && legalSquares.includes(destinationSquareId)){
         destinationSquare.appendChild(piece);
@@ -105,6 +103,9 @@ function getPossibleMoves(startingSquareId, piece) {
     }
     if(piece.classList.contains("queen")){
         getQueenMoves(startingSquareId, pieceColor);
+    }
+    if(piece.classList.contains("rook")){
+        getRookMoves(startingSquareId, pieceColor);
     }
 }
 
@@ -211,13 +212,10 @@ function getBishopMoves(startingSquareId, pieceColor){
         [1,1], [-1,1], [1,-1], [-1,-1]
     ];
     moveVectors.forEach((move)=>{
-        console.log("here");
         for (let i=1; i<8; i++){
-            console.log(i);
             currentFile = file+move[0]*i;
             currentRank = rankNumber+move[1]*i;
             if(currentFile >= 0 && currentFile <= 7 && currentRank > 0 && currentRank<=8){
-                console.log("possible move: "+String.fromCharCode(currentFile+97)+currentRank);
                 let currentSquareId = String.fromCharCode(currentFile+97)+currentRank;
                 let currentSquare = document.getElementById(currentSquareId);
                 let squareContent = isSquareOccupied(currentSquare);
@@ -240,13 +238,62 @@ function getQueenMoves(startingSquareId, pieceColor){
         [1,1], [-1,1], [1,-1], [-1,-1], [1,0], [0,1], [-1,0], [0,-1]
     ];
     moveVectors.forEach((move)=>{
-        console.log("here");
         for (let i=1; i<8; i++){
-            console.log(i);
             currentFile = file+move[0]*i;
             currentRank = rankNumber+move[1]*i;
             if(currentFile >= 0 && currentFile <= 7 && currentRank > 0 && currentRank<=8){
-                console.log("possible move: "+String.fromCharCode(currentFile+97)+currentRank);
+                let currentSquareId = String.fromCharCode(currentFile+97)+currentRank;
+                let currentSquare = document.getElementById(currentSquareId);
+                let squareContent = isSquareOccupied(currentSquare);
+                if(squareContent != "blank" && squareContent == pieceColor)
+                    return;
+                legalSquares.push(String.fromCharCode(currentFile+97)+currentRank);
+            }
+        }
+    })
+}
+
+function getRookMoves(startingSquareId, pieceColor){
+    const file = startingSquareId.charCodeAt(0)-97;
+    const rank = startingSquareId.charAt(1);
+    const rankNumber = parseInt(rank);
+    let currentFile = file;
+    let currentRank = rankNumber;
+
+    const moveVectors = [
+        [1,0], [0,1], [-1,0], [0,-1]
+    ];
+    moveVectors.forEach((move)=>{
+        for (let i=1; i<8; i++){
+            currentFile = file+move[0]*i;
+            currentRank = rankNumber+move[1]*i;
+            if(currentFile >= 0 && currentFile <= 7 && currentRank > 0 && currentRank<=8){
+                let currentSquareId = String.fromCharCode(currentFile+97)+currentRank;
+                let currentSquare = document.getElementById(currentSquareId);
+                let squareContent = isSquareOccupied(currentSquare);
+                if(squareContent != "blank" && squareContent == pieceColor)
+                    return;
+                legalSquares.push(String.fromCharCode(currentFile+97)+currentRank);
+            }
+        }
+    })
+}
+
+function getRookMoves(startingSquareId, pieceColor){
+    const file = startingSquareId.charCodeAt(0)-97;
+    const rank = startingSquareId.charAt(1);
+    const rankNumber = parseInt(rank);
+    let currentFile = file;
+    let currentRank = rankNumber;
+
+    const moveVectors = [
+        [1,1], [-1,1], [1,-1], [-1,-1], [1,0], [0,1], [-1,0], [0,-1]
+    ];
+    moveVectors.forEach((move)=>{
+        for (let i=1; i<8; i++){
+            currentFile = file+move[0]*i;
+            currentRank = rankNumber+move[1]*i;
+            if(currentFile >= 0 && currentFile <= 7 && currentRank > 0 && currentRank<=8){
                 let currentSquareId = String.fromCharCode(currentFile+97)+currentRank;
                 let currentSquare = document.getElementById(currentSquareId);
                 let squareContent = isSquareOccupied(currentSquare);
