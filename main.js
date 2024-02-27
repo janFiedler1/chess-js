@@ -107,6 +107,9 @@ function getPossibleMoves(startingSquareId, piece) {
     if(piece.classList.contains("rook")){
         getRookMoves(startingSquareId, pieceColor);
     }
+    if(piece.classList.contains("king")){
+        getKingMoves(startingSquareId, pieceColor);
+    }
 }
 
 function isSquareOccupied(square) {
@@ -279,7 +282,7 @@ function getRookMoves(startingSquareId, pieceColor){
     })
 }
 
-function getRookMoves(startingSquareId, pieceColor){
+function getKingMoves(startingSquareId, pieceColor){
     const file = startingSquareId.charCodeAt(0)-97;
     const rank = startingSquareId.charAt(1);
     const rankNumber = parseInt(rank);
@@ -290,17 +293,15 @@ function getRookMoves(startingSquareId, pieceColor){
         [1,1], [-1,1], [1,-1], [-1,-1], [1,0], [0,1], [-1,0], [0,-1]
     ];
     moveVectors.forEach((move)=>{
-        for (let i=1; i<8; i++){
-            currentFile = file+move[0]*i;
-            currentRank = rankNumber+move[1]*i;
-            if(currentFile >= 0 && currentFile <= 7 && currentRank > 0 && currentRank<=8){
-                let currentSquareId = String.fromCharCode(currentFile+97)+currentRank;
-                let currentSquare = document.getElementById(currentSquareId);
-                let squareContent = isSquareOccupied(currentSquare);
-                if(squareContent != "blank" && squareContent == pieceColor)
-                    return;
-                legalSquares.push(String.fromCharCode(currentFile+97)+currentRank);
-            }
+        currentFile = file+move[0];
+        currentRank = rankNumber+move[1];
+        if(currentFile >= 0 && currentFile <= 7 && currentRank > 0 && currentRank<=8){
+            let currentSquareId = String.fromCharCode(currentFile+97)+currentRank;
+            let currentSquare = document.getElementById(currentSquareId);
+            let squareContent = isSquareOccupied(currentSquare);
+            if(squareContent != "blank" && squareContent == pieceColor)
+                return;
+            legalSquares.push(String.fromCharCode(currentFile+97)+currentRank);
         }
     })
 }
