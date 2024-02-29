@@ -5,6 +5,9 @@ const pieces = document.getElementsByClassName("piece");
 const piecesImages = document.getElementsByTagName("img");
 const rand = ['shoes', 'shirt'];
 
+const resetButton = document.getElementById("reset");
+resetButton.addEventListener("click", resetBoard());
+
 setupBoardSquares();
 setUpPieces();
 
@@ -43,6 +46,10 @@ function allowDrop(ev) {
     ev.preventDefault();
 }
 
+function resetBoard(){
+
+}
+
 
 /**
  * Get color by attribute from piece div
@@ -59,6 +66,7 @@ function drag(ev) {
         const startingSquareId = piece.parentNode.id;
         getPossibleMoves(startingSquareId, piece);
     }
+    markValidSquares(legalSquares)
 }
 
 /*
@@ -77,6 +85,7 @@ function drop(ev){
         destinationSquare.appendChild(piece);
         isWhiteTurn = !isWhiteTurn;
         legalSquares.length = 0;
+        clearSquareMarking();
         return;
     }
     if(isSquareOccupied(destinationSquare)!="blank" && legalSquares.includes(destinationSquareId)){
@@ -86,6 +95,7 @@ function drop(ev){
         destinationSquare.appendChild(piece);
         isWhiteTurn = !isWhiteTurn;
         legalSquares.length = 0;
+        clearSquareMarking();
         return;
     }
 }
@@ -304,4 +314,16 @@ function getKingMoves(startingSquareId, pieceColor){
             legalSquares.push(String.fromCharCode(currentFile+97)+currentRank);
         }
     })
+}
+
+function markValidSquares(legalSquares) {
+    legalSquares.forEach((square)=>{
+        document.getElementById(square).style.filter = "brightness(50%)";
+    })
+}
+
+function clearSquareMarking() {
+    for(let i=0; i<boardSquares.length; i++) { 
+        boardSquares[i].style.filter = "brightness(100%)";
+    }
 }
