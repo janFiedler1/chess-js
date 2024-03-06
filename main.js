@@ -3,10 +3,6 @@ let isWhiteTurn = true;
 const boardSquares = document.getElementsByClassName("square");
 const pieces = document.getElementsByClassName("piece");
 const piecesImages = document.getElementsByTagName("img");
-const rand = ['shoes', 'shirt'];
-
-const resetButton = document.getElementById("reset");
-resetButton.addEventListener("click", resetBoard());
 
 setupBoardSquares();
 setUpPieces();
@@ -45,11 +41,6 @@ function setUpPieces() {
 function allowDrop(ev) {
     ev.preventDefault();
 }
-
-function resetBoard(){
-
-}
-
 
 /**
  * Get color by attribute from piece div
