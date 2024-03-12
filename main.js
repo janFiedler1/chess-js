@@ -31,6 +31,7 @@ function setUpPieces() {
     for (let i=0; i<pieces.length; i++){
         pieces[i].addEventListener("dragstart", drag);
         pieces[i].setAttribute("draggable", true);
+        //pieces[i].addEventListener("drag", function() {document.getElementById("main").style.cursor = "grabbing";console.log("hi")});
         pieces[i].id = pieces[i].className.split(" ")[1]+pieces[i].parentElement.id;
     }
     for (let i=0; i<piecesImages.length; i++){
@@ -57,7 +58,7 @@ function drag(ev) {
         const startingSquareId = piece.parentNode.id;
         getPossibleMoves(startingSquareId, piece);
     }
-    markValidSquares(legalSquares)
+    markValidSquares(legalSquares);
 }
 
 /*

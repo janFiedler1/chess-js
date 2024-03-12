@@ -51,7 +51,7 @@ body {
 .piece {
     width: 100%;
     z-index: 1;
-    cursor: pointer;
+    cursor: grab;
 }
 .piece img {
     max-width: 100%;
